@@ -6,8 +6,24 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Teddy API')
-    .setDescription('The Teddy backend test API')
+    .setTitle('Shortener API')
+    .setDescription(
+      `
+      ## URL Shortener API
+      
+      A comprehensive service for creating, managing, and tracking shortened URLs with the following features:
+      
+      **Core Functionality**:
+      - 🔗 Create short URLs from long URLs
+      - 👤 User-specific URL management (authenticated users)
+      - 📊 Track click counts and access statistics
+      - 🛠️ Update or delete existing short URLs
+      
+      **Authentication**:
+      - 🔑 JWT Bearer Token for protected endpoints
+      - 👥 Optional auth for public URL shortening
+      `,
+    )
     .setVersion('1.0')
     .addTag('APIs')
     .build();
