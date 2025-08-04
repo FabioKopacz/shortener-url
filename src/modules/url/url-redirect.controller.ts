@@ -27,12 +27,12 @@ export class UrlRedirectController {
   async redirect(@Param('shortCode') shortCode: string, @Res() res: Response) {
     const originalUrl = await this.urlService.getOriginalUrl(shortCode);
 
-    if (!originalUrl) {
+    if (!originalUrl?.data) {
       throw new NotFoundException('Short URL not found');
     }
 
     await this.urlService.incrementAccessCount({ short_code: shortCode });
 
-    return res.redirect(originalUrl);
+    return res.redirect(originalUrl?.data);
   }
 }

@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { UrlService } from '../url.service';
 import { UrlRepository } from '../url.repository';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, HttpStatus } from '@nestjs/common';
 
 // Mocks
 const mockUrlRepository = {
@@ -62,7 +62,7 @@ describe('UrlService', () => {
         'https://original.com',
       );
       const result = await service.getOriginalUrl('abc123');
-      expect(result).toBe('https://original.com');
+      expect(result.data).toBe('https://original.com');
     });
   });
 
@@ -80,7 +80,7 @@ describe('UrlService', () => {
       ]);
 
       const result = await service.getUrlsByUser({ user_id: 'user1' });
-      expect(result[0].short_url).toBe('https://localhost:3000/abc123');
+      expect(result.data?.[0]?.short_url).toBe('https://localhost:3000/abc123');
     });
   });
 
@@ -95,25 +95,100 @@ describe('UrlService', () => {
         user_id: 'user1',
       });
 
-      expect(result.shortUrl).toBe('https://localhost:3000/abc123');
+      expect(result.data).toBe('https://localhost:3000/abc123');
     });
   });
 
   describe('updateUrl', () => {
+    const mockUrl = {
+      url_id: '1',
+      original: 'https://original.com',
+      short_code: 'abc123',
+      user_id: 'user1',
+      click_count: 5,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    beforeEach(() => {
+      mockUrlRepository.findUrlById.mockResolvedValue(mockUrl);
+      mockUrlRepository.updateUrl.mockResolvedValue(mockUrl);
+    });
+
     it('should throw if URL not found', async () => {
       mockUrlRepository.findUrlById.mockResolvedValue(null);
       await expect(
-        service.updateUrl({ url_id: '404', original_url: 'https://test.com' }),
+        service.updateUrl({
+          url_id: '404',
+          original_url: 'https://test.com',
+          user_id: 'user1',
+        }),
       ).rejects.toThrow('URL with ID 404 does not exist');
+    });
+
+    it('should throw BadRequest if user is not the owner', async () => {
+      await expect(
+        service.updateUrl({
+          url_id: '1',
+          original_url: 'https://test.com',
+          user_id: 'user2',
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should update URL if user is the owner', async () => {
+      const result = await service.updateUrl({
+        url_id: '1',
+        original_url: 'https://new-url.com',
+        user_id: 'user1',
+      });
+
+      expect(result.data?.url_id).toBe('1');
+      expect(result.message).toBe('URL updated successfully');
+      expect(mockUrlRepository.updateUrl).toHaveBeenCalled();
     });
   });
 
   describe('deleteUrl', () => {
+    const mockUrl = {
+      url_id: '1',
+      original: 'https://original.com',
+      short_code: 'abc123',
+      user_id: 'user1',
+      click_count: 5,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    beforeEach(() => {
+      mockUrlRepository.findUrlById.mockResolvedValue(mockUrl);
+    });
+
     it('should throw if URL not found', async () => {
       mockUrlRepository.findUrlById.mockResolvedValue(null);
       await expect(service.deleteUrl({ url_id: '404' })).rejects.toThrow(
         'URL with ID 404 does not exist',
       );
+    });
+
+    it('should throw BadRequest if user is not the owner', async () => {
+      await expect(
+        service.deleteUrl({
+          url_id: '1',
+          user_id: 'user2',
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should delete URL if user is the owner', async () => {
+      const result = await service.deleteUrl({
+        url_id: '1',
+        user_id: 'user1',
+      });
+
+      expect(result.message).toBe('URL deleted successfully');
+      expect(result.code).toBe(HttpStatus.NO_CONTENT);
+      expect(mockUrlRepository.deleteUrl).toHaveBeenCalledWith('1');
     });
   });
 });

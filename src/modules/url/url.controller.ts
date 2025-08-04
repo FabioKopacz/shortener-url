@@ -55,10 +55,12 @@ export class UrlController {
   updateUrl(
     @Param('id') urlId: string,
     @Body() body: Pick<UpdateUrlDto, 'original_url'>,
+    @CurrentUser() user: CurrentUserDto,
   ) {
     return this.urlService.updateUrl({
       ...body,
       url_id: urlId,
+      user_id: user.user_id,
     });
   }
 
@@ -67,7 +69,7 @@ export class UrlController {
   @ApiResponse({ status: 204, description: 'URL deleted successfully' })
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deleteUrl(@Param('id') urlId: string) {
-    return this.urlService.deleteUrl({ url_id: urlId });
+  deleteUrl(@Param('id') urlId: string, @CurrentUser() user: CurrentUserDto) {
+    return this.urlService.deleteUrl({ url_id: urlId, user_id: user.user_id });
   }
 }
