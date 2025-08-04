@@ -22,18 +22,7 @@ model user {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  url     url[]
-  session session[]
-}
-
-model session {
-  session_id String    @id @default(uuid()) @db.Uuid
-  token      String    @unique @db.VarChar(512)
-  user_id    String    @db.Uuid
-  user       user      @relation(fields: [user_id], references: [user_id])
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  url url[]
 }
 
 model url {
