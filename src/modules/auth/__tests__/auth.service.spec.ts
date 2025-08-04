@@ -63,7 +63,7 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should return JWT token', () => {
       const result = service.login({ user_id: '1', email: 'test@email.com' });
-      expect(result).toEqual({ access_token: 'mock-token' });
+      expect(result.data).toEqual({ access_token: 'mock-token' });
     });
 
     it('should return tokenized user_id and email on login', () => {

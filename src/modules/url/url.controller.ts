@@ -19,7 +19,7 @@ import { UrlService } from './url.service';
 import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../../common/guard/optional-jwt-auth.guard';
 import { CurrentUser } from '../../common/decorator/current-user.decorator';
-import { CurrentUserDto } from '../auth/interface/current-user.dto';
+import { CurrentUserDto } from '../../common/dto/current-user.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
 
 @ApiTags('URL')

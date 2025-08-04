@@ -4,6 +4,8 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../user/user.repository';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { BaseResponseDTO } from '../../common/dto/response.dto';
+import { LoginResponse } from './interface/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -21,11 +23,18 @@ export class AuthService {
     return user;
   }
 
-  login(user: { user_id: string; email: string }) {
+  login(user: {
+    user_id: string;
+    email: string;
+  }): BaseResponseDTO<LoginResponse> {
     const payload = { user_id: user.user_id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+
+    return new BaseResponseDTO({
+      data: {
+        access_token: this.jwtService.sign(payload),
+      },
+      message: 'Login successful',
+    });
   }
 
   async registerUser({ email, password }: SignUpDto) {

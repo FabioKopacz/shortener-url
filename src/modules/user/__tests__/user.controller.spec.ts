@@ -39,7 +39,7 @@ describe('UserService', () => {
       password: 'anyPassword',
     });
 
-    expect(result.user_id).toBe(1);
+    expect(result.data?.user_id).toBe(1);
   });
 
   it('should return error duplicated email on create', async () => {
