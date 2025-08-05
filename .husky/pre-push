@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Husky v10+ no longer requires sourcing husky.sh
+
+npm run test
