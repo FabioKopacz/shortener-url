@@ -125,8 +125,8 @@ This project works well as a basic URL shortener, but to support more users and 
 
 ### Potential Improvements
 
-- **Stateless Authentication**:  
-  Using JWT tokens is already a good approach for scaling since they don’t depend on server memory. Still, if you need to support things like logging users out or managing sessions more safely, you could add features like refresh tokens or store invalidated tokens in Redis.
+- **Stateless Authentication**:
+  - Using JWT tokens is already a good approach for scaling since they don’t depend on server memory. Still, if you need to support things like logging users out or managing sessions more safely, you could add features like refresh tokens or store invalidated tokens in Redis.
 
 - **Database Optimization**:
   - Add indexes on frequently queried fields like `short_code`, `user_id`.
