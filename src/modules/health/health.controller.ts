@@ -10,6 +10,14 @@ export class HealthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The API is healthy',
+    schema: {
+      example: {
+        data: {
+          status: 200,
+        },
+        message: 'Health check successful',
+      },
+    },
   })
   check() {
     return new BaseResponseDTO({
